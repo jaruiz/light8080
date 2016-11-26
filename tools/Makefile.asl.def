@@ -1,0 +1,36 @@
+# This makefile fragment contains build options for the ASL assembler.
+# By default, ASL install dir will be under the current dir; this is the
+# default path assumed by light8080 makefiles. 
+#
+# -------------------------------------------------------------------------
+# choose your compiler (must be ANSI-compliant!) and linker command, plus
+# any additionally needed flags
+
+CC = gcc
+LD = gcc
+CFLAGS = -O3 -fomit-frame-pointer -Wall
+LDFLAGS =
+
+TARG_OBJEXTENSION = .o
+TARG_EXEXTENSION =
+
+HOST_OBJEXTENSION = $(TARG_OBJEXTENSION)
+HOST_EXEXTENSION = $(TARG_EXEXTENSION)
+
+# -------------------------------------------------------------------------
+# directories where binaries, includes, and manpages should go during
+# installation
+
+BINDIR = $(CURDIR)/install/bin
+INCDIR = $(CURDIR)/install/include/asl
+MANDIR = $(CURDIR)/install/man
+LIBDIR = $(CURDIR)/install/lib/asl
+DOCDIR = $(CURDIR)/install/doc/asl
+
+# -------------------------------------------------------------------------
+# character encoding to use (choose one of them)
+
+# CHARSET = CHARSET_ASCII7
+# CHARSET = CHARSET_IBM437
+# CHARSET = CHARSET_UTF8
+CHARSET = CHARSET_ISO8859_1
