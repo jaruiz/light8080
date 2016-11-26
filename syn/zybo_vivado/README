@@ -10,6 +10,13 @@ Vivado Tcl scripting guide (ug894, 'Using Tcl Scripting').
 Output files, including the bit stream, will be created within ./zybo_demo.
 
 
+USAGE
+-----
+
+./build.sh will launch the synthesis flow. 
+./delete.sh will clean the directory.
+
+
 FILES
 -----
 
