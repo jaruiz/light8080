@@ -1,17 +1,17 @@
 --##############################################################################
--- Light8080 SoC demo on DE-1 board
+-- Light8080 MPU demo on Terasic's DE-1 board.
 --##############################################################################
 -- 
--- This is a minimal demo of the light8080 SoC targetting Terasic's DE-1 
+-- This is a minimal demo of the light8080 MPU wrapper targetting Terasic's DE-1 
 -- development board for Cyclone-2 FPGAs. 
 -- Since the demo uses little board resources other than the serial port it 
--- should be easy to port it to other platforms.
--- This file is strictly for demonstration purposes and has not been tested 
+-- should be easy to port it to other platforms. 
 --
--- The SoC contains a block of RAM that is used for both program and data. The
--- BRAM is initialized at synthesis time with a constant taken from package
--- 'obj_code_pkg'. This package can be built from an object code file in Intel
--- HEX format with utility '/tools/obj2hdl' included with the project.
+-- The MPU entity contains a block of RAM that is used for both program and 
+-- data. The BRAM is initialized at synthesis time with a constant taken from 
+-- package 'obj_code_pkg'. This package can be built from an object code file 
+-- in Intel HEX format with utility '/tools/build_rom' included with this 
+-- project. There's an example of this in the TB makefiles.
 --
 -- This demo has been built from a generic template for designs targetting the
 -- DE-1 development board. The entity defines all the inputs and outputs present
@@ -20,8 +20,7 @@
 
 library ieee;
 use ieee.std_logic_1164.all;
-use ieee.std_logic_arith.all;
-use ieee.std_logic_unsigned.all;
+use ieee.numeric_std.all;
 
 -- Package that contains the program object code in VHDL constant format.
 use work.obj_code_pkg.all;
@@ -106,7 +105,7 @@ signal clk_1hz :          std_logic;
 signal clk_master :       std_logic;
 signal reset :            std_logic;
 signal clk :              std_logic;
-signal counter_1hz :      std_logic_vector(25 downto 0);
+signal counter_1hz :      unsigned(25 downto 0);
 
 -- SD control signals ----------------------------------------------------------
 -- SD connector unused, unconnected
@@ -243,7 +242,7 @@ begin
         clk_1hz <= '0';
         counter_1hz <= (others => '0');
       else
-        if conv_integer(counter_1hz) = 50000000 then
+        if to_integer(counter_1hz) = 50000000 then
           counter_1hz <= (others => '0');
           clk_1hz <= not clk_1hz;
         else
