@@ -96,6 +96,7 @@
 
 import sys
 import os
+import ntpath
 import optparse
 import re
 
@@ -201,7 +202,7 @@ class uCodeROM(object):
     self.srcfile = srcfile
     self.source = []                  # List of source lines indexed by lineno
     self.lineno = 0                   # Source line being assembled in pass 1
-    self.upc_counter = 0              # uA of nest uI
+    self.upc_counter = 0              # uA of next uI
     self.label_address_dict = {}      # label -> uA
     self.label_lineno_dict = {}       # label -> src line number
     self.code_address_dict = {}       # bin opcode pattern -> uA
@@ -223,9 +224,12 @@ class uCodeROM(object):
 
 
   def build_vhdl_package(self, vhdl_filename):
-    """Return string with microcode table formatted as VHDL package."""
+    """Return string with microcode table formatted as VHDL package.
+    Note you choose the file name but not the package name.
+    """
 
-    vhdl =  "-- light8080_ucode_pkg.vhdl -- Microcode table for light8080 CPU core.\n"
+    base_filename = ntpath.basename(vhdl_filename)
+    vhdl =  "-- %s -- Microcode table for light8080 CPU core.\n" % base_filename
     vhdl += "library ieee;\n"
     vhdl += "use ieee.std_logic_1164.all;\n"
     vhdl += "use ieee.numeric_std.all;\n\n"
@@ -398,7 +402,7 @@ class uCodeROM(object):
     if len(sides) == 0:
       pass # Empty field, ignore as NOP.
     elif len(sides)==1 and sides[0]=='nop':
-      pass # NOP, ignore.
+      pass # NOP, ignore (instruction emitted by default is NOP).
     elif len(sides)==2:
       # Parse target register...
       if not sides[0] in OPCTRL_DST:
@@ -639,6 +643,7 @@ class uCodeROM(object):
         self._set_bits(UF_JUMP_DST_H, target_bin[0:2])
         
       else:
+        # Unused opcode. JSR to zero, ending instruction.
         self.uI = "00001000000000000000000000000000"
       self._emit()
 
