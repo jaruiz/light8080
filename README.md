@@ -47,7 +47,7 @@ I am in debt with Scott A. Moore for [his cpu8080 core](http://opencores.org/pro
  * 369 LEs plus 4 M4Ks @ 67 MHz (balanced optimization)
  
 3. Xilinx Vivado on Zynq-7000 (XC7Z010-1CLG400C):
- * 334 LUTs (no BRAMs) @ 125 MHz (clock constrained to 125MHZ, 0.45 ns slack)
+ * 334 LUTs (no BRAMs) @ 125 MHz (clock constrained to 125MHz, 0.45 ns slack)
 
 _(Note that the Zynq build uses no BRAM for the microcode, thanks to the 6 input LUTs mostly.)_
 
