@@ -38,7 +38,6 @@ I am in debt with Scott A. Moore for [his cpu8080 core](http://opencores.org/pro
 
 ### Performance (standalone CPU, synthesis only): 
 
-
 1. Xilinx XST on Spartan 3 (-5 grade):
  * 204 LUTs plus 1 BRAM @ 80 MHz (optimized for area)
  * 228 LUTs plus 1 BRAM @ 100 MHz (optimized for speed)
@@ -46,6 +45,11 @@ I am in debt with Scott A. Moore for [his cpu8080 core](http://opencores.org/pro
 
 2. Altera Quartus on Cyclone 2:
  * 369 LEs plus 4 M4Ks @ 67 MHz (balanced optimization)
+ 
+3. Xilinx Vivado on Zynq-7000 (XC7Z010-1CLG400C):
+ * 334 LUTs (no BRAMs) @ 125 MHz (clock constrained to 125MHZ, 0.45 ns slack)
+
+_(Note that the Zynq build uses no BRAM for the microcode, thanks to the 6 input LUTs mostly.)_
 
 
 ## Status 
