@@ -79,14 +79,14 @@ These are the differences:
  * ...although of course you can use whatever simulator you want.
 * Verilog version made by Moti Litochevski not moved yet to GitHub...
  * ...and this includes some other goodies Moti added to the project, including a free Small C compiler port.
-* Demos, including Altair 4K Basic, not moved yet to 
-* Project used to be tested on Xilinx ISE. Now it includes scripts for Vivado...
+* Demos, including Altair 4K Basic, not moved yet to GitHub.
+* Project used to be tested on Xilinx ISE. Now it includes synthesis scripts for Vivado only...
  * ...because I no longer have a functional install of ISE.
-* Microcode ROM data extracted to a semarate VHDL package.
+* Microcode ROM data extracted to a separate VHDL package.
 * Microcode assembler rewritten from scratch in Python.
 
 
 
-This list is mostly a reminder to myself of things that remain to be done on this project. The project as it stands here in GitHub should be useable (inasmuch as an 8080 is useable).
+This list is mostly a reminder to myself of things that remain to be done on this project. The project as it stands here in GitHub should be useable (inasmuch as an 8080 is useable in practice).
 
 
