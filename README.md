@@ -47,7 +47,7 @@ I am in debt with Scott A. Moore for [his cpu8080 core](http://opencores.org/pro
  * 369 LEs plus 4 M4Ks @ 67 MHz (balanced optimization)
  
 3. Xilinx Vivado on Zynq-7000 (XC7Z010-1CLG400C):
- * 334 LUTs (no BRAMs) @ 125 MHz (clock constrained to 125MHZ, 0.45 ns slack)
+ * 334 LUTs (no BRAMs) @ 125 MHz (clock constrained to 125MHz, 0.45 ns slack)
 
 _(Note that the Zynq build uses no BRAM for the microcode, thanks to the 6 input LUTs mostly.)_
 
@@ -80,8 +80,8 @@ These are the differences:
  * ...although of course you can use whatever simulator you want.
 * Verilog version made by Moti Litochevski not moved yet to GitHub...
  * ...and this includes some other goodies Moti added to the project, including a free Small C compiler port.
-* Demos, including Altair 4K Basic, not moved yet. 
-* Project used to be tested on Xilinx ISE. Now it includes scripts for Vivado...
+* Demos, including Altair 4K Basic, not moved yet to GitHub.
+* Project used to be tested on Xilinx ISE. Now it includes synthesis scripts for Vivado only...
  * ...because I no longer have a functional install of ISE.
 * Microcode ROM data extracted to a separate VHDL package.
 * Microcode assembler rewritten from scratch in Python.
