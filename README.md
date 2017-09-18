@@ -55,8 +55,9 @@ _(Note that the Zynq build uses no BRAM for the microcode, thanks to the 6 input
 ## Status 
 
 The core has already executed some quite large pieces of original code in hardware, including the Microsoft Altair 4K Basic.
-Interrupt response has been simulated and tested in real hardware.
-The project includes a small SoC system built around the CPU core that can be useful as an usage example or as the starting point for a real application.
+Interrupt response has been simulated and tested in real hardware (but test
+sources not yet moved to this repo!).
+The project includes a minimal MCU system built around the CPU core that can be useful as an usage example or as the starting point for a real application.
 
 Besides, thanks to Moti Litochevski the project is now available in both Verilog and VHDL versions (but only on the OpenCores site, Verilog port not moved to GitHub yet!).
 
@@ -74,19 +75,19 @@ We have set up some demos to showcase the core.
 This core used to be at [OpenCores](https://opencores.org/project,light8080). I moved it here in late '16 and slightly refactored it. 
 These are the differences: 
 
-* Project used to rely on DOS Batch files, now it uses Makefiles and it Linux-centric.
-* Simulations used to rely on Modelsim. Now I've included makefiles that use GHDL...
+* Project used to rely on DOS Batch files, now it uses Makefiles and is Linux-centric.
+* Simulations used to rely on Modelsim. Now I've included makefiles and updated RTL to use GHDL...
  * ...although of course you can use whatever simulator you want.
 * Verilog version made by Moti Litochevski not moved yet to GitHub...
  * ...and this includes some other goodies Moti added to the project, including a free Small C compiler port.
-* Demos, including Altair 4K Basic, not moved yet to 
+* Demos, including Altair 4K Basic, not moved yet. 
 * Project used to be tested on Xilinx ISE. Now it includes scripts for Vivado...
  * ...because I no longer have a functional install of ISE.
-* Microcode ROM data extracted to a semarate VHDL package.
+* Microcode ROM data extracted to a separate VHDL package.
 * Microcode assembler rewritten from scratch in Python.
 
 
 
-This list is mostly a reminder to myself of things that remain to be done on this project. The project as it stands here in GitHub should be useable (inasmuch as an 8080 is useable).
+This list is mostly a reminder to myself of things that remain to be done on this project. The project as it stands here in GitHub should be usable (inasmuch as an 8080 core is usable).
 
 
