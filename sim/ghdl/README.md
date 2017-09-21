@@ -44,7 +44,6 @@ I guess some day I'll get around to porting them to this repo.
 
 In order to play with this TB with no modifications you will need ghdl and also ASL, an assembler for the 8080. 
 The makefile within the ```tools``` directory in this project has a target for the automatic installation of ASL which will only need git and gcc on your machine, no root privileges or anything -- it's only ever been tested on Linux, though. It is meant to install the program for you transparently; at at the very least it should be a good starting point if you have to install it yourself...
-Al other necessary utility scripts are included with the project.
 
 
 
