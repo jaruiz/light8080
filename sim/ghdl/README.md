@@ -23,7 +23,7 @@ So if you want to tinker with the microcode you can do so but there is no need t
 
 You can find the tests in directory ```../../src/sw``` relative to this one. 
 As you can see, there's not much to choose from right now:)
-By default test ```disgnostic``` will be run -- it's an old 8080/8085 CPU tester that I have adapted to this project. 
+By default test ```disgnostic``` will be run -- it's a classic 8080/8085 CPU tester that I have slightly adapted for this project. 
 There should be a README file there with a useful description.
 
 None of the tests have any console output. I somehow lost that capability when I ported the tests from Modelsim to GHDL. 
@@ -39,5 +39,13 @@ So if you see a 'pass' message then the CPU works as far as the diagnostic progr
 
 The OpenCores version of this project has a few more tests, including one for interrupts. 
 I guess some day I'll get around to porting them to this repo.
+
+### Requirements
+
+In order to play with this TB with no modifications you will need ghdl and also ASL, an assembler for the 8080. 
+The makefile within the ```tools``` directory in this project has a target for the automatic installation of ASL which will only need git and gcc on your machine, no root privileges or anything -- it's only ever been tested on Linux, though. It is meant to install the program for you transparently; at at the very least it should be a good starting point if you have to install it yourself...
+Al other necessary utility scripts are included with the project.
+
+
 
 
