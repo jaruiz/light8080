@@ -1,8 +1,22 @@
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Vivado non-project compilation flow script adapted from UG894.
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#
+# Get command line arguments.
+if {$argc < 1} {
+    puts "Missing command line argument."
+    puts "Usage: $argv0 <project root directory>"
+    exit 1
+}
+set PROJECT_ROOT [lindex $argv 0]
+#
 # STEP#0: project configuration.
 set PROJECT_NAME    "zybo_demo"
-set RTL_DIR         "../../src/vhdl/rtl"
-set BOARD_DIR       "../../boards/zybo"
-set OBJ_CODE_DIR    "../../src/sw/diagnostic"
+set TOP_MODULE      "zybo_top"
+set TARGET_CHIP     "xc7z010clg400-1"
+set RTL_DIR         "$PROJECT_ROOT/src/vhdl/rtl"
+set BOARD_DIR       "$PROJECT_ROOT/boards/zybo"
+set OBJ_CODE_DIR    "$PROJECT_ROOT/src/sw/diagnostic"
 set VHDL_FILES [list \
     "$RTL_DIR/mcu/mcu80_pkg.vhdl" \
     "$OBJ_CODE_DIR/obj_code_pkg.vhdl" \
@@ -16,7 +30,7 @@ set VHDL_FILES [list \
 set XDC_FILES [list \
     "$BOARD_DIR/constraints/vivado-zybo.xdc" \
 ]
-# From this point onwards the script is mostly generic.
+#~~~~ From this point onwards the script is mostly generic ~~~~~~~~~~~~~~~~~~~~~
 
 # STEP#1: define the output directory area.
 #
@@ -31,7 +45,7 @@ read_xdc    $XDC_FILES
 # STEP#3: run synthesis, write design checkpoint, report timing,
 # and utilization estimates
 #
-synth_design -top zybo_top -part "xc7z010clg400-1"
+synth_design -top $TOP_MODULE -part $TARGET_CHIP
 write_checkpoint -force $outputDir/post_synth.dcp
 report_timing_summary -file $outputDir/post_synth_timing_summary.rpt
 report_utilization -hierarchical -file $outputDir/post_synth_util.rpt
@@ -68,8 +82,7 @@ report_route_status -file $outputDir/post_route_status.rpt
 report_timing_summary -file $outputDir/post_route_timing_summary.rpt
 report_power -file $outputDir/post_route_power.rpt
 report_drc -file $outputDir/post_imp_drc.rpt
-# TODO WE don't need the Verilog netlist, make this optional.
-#write_verilog -force $outputDir/cpu_impl_netlist.v -mode timesim -sdf_anno true
+write_verilog -force $outputDir/cpu_impl_netlist.v -mode timesim -sdf_anno true
 #
 # STEP#6: generate a bitstream
 #
