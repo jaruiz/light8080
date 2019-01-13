@@ -1,4 +1,17 @@
+# Build script for Quartus 2.
 # Run this script with quartus_sh -t
+
+#####################################################################################
+# Command line arguments.
+#####################################################################################
+
+if {$argc < 1} {
+    puts "Missing command line argument."
+    puts "Usage: $argv0 <project root directory>"
+    exit 1
+}
+set PROJECT_ROOT [lindex $argv 0]
+
 
 #####################################################################################
 # Project configuration.
@@ -6,9 +19,9 @@
 
 set PROJECT_NAME    "de1_demo"
 set PROJECT_TOP     "de1_top"
-set RTL_DIR         "../../src/vhdl/rtl"
-set BOARD_DIR       "../../boards/de1"
-set OBJ_CODE_DIR    "../../src/sw/hello"
+set RTL_DIR         "$PROJECT_ROOT/src/vhdl/rtl"
+set BOARD_DIR       "$PROJECT_ROOT/boards/de1"
+set OBJ_CODE_DIR    "$PROJECT_ROOT/src/sw/hello"
 
 #####################################################################################
 # Create project, then add source files and pin assignments.
