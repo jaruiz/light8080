@@ -16,6 +16,9 @@
 #
 # ==============================================================================
 
+# Use bash for shell commands like echo.
+SHELL := /bin/bash
+
 .PHONY: clean install uninstall pull_assembler install_assembler \
 				check_dependencies
 
@@ -23,6 +26,19 @@
 ASL_REPO_PATH = https://github.com/begoon/asl.git
 # Will be nonempty if git command is available.
 GIT_INSTALLED := $(shell command -v git 2> /dev/null)
+
+
+.DEFAULT: help
+.PHONY: help
+help:
+	@echo "Use this makefile to install the ASL assembler locally."
+	@echo
+	@echo "GOALS:"
+	@echo "   install    - Install & build ASL locally within this directory"
+	@echo "   uninstall  - Remove anything that was installed"
+	@echo
+	@echo "You'll need git and gcc to installl the tool(s)."
+	@echo
 
 
 check_dependencies:
