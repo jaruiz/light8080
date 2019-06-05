@@ -1,0 +1,13 @@
+.local
+local
+syn/**/output/*
+sim/**/*.o
+sim/**/*.lst
+sim/**/*.cf
+sim/ghdl/*
+~sim/ghdl/makefile
+~sim/ghdl/README.*
+src/sw/**/*.ihx
+src/sw/**/*.lst
+src/sw/**/*.p
+tools/asl/*
