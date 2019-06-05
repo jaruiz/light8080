@@ -1,25 +1,24 @@
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
 
-.PHONY: clean sim ghdl ghdl_rtl ghdl_syntax
+# Use bash for shell commands
+SHELL := /bin/bash
 
-.DEFAULT: sim
 
 #---- Project config. ----------------------------------------------------------
 
-PROJECTDIR	 	:= ../..
-SWDIR 				:= $(PROJECTDIR)/src/sw
-UASMDIR 			:= $(PROJECTDIR)/tools/uasm
+HERE            := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
+PROJECTDIR      := $(HERE)/../..
+SWDIR           := $(PROJECTDIR)/src/sw
+UASMDIR         := $(PROJECTDIR)/tools/uasm
 
 
 #---- Simulator configuration. -------------------------------------------------
 
 # GHDL.
-GHDLC		:= ghdl
-GHDLFLAGS 	:=
-GHDLSIMFLAGS 	:= --ieee-asserts=disable
-# GtkWave.
-WAVE 		:= gtkwave
+GHDLC         := ghdl
+GHDLFLAGS     :=
+GHDLSIMFLAGS  := --ieee-asserts=disable
 
 
 #---- Defaults. ----------------------------------------------------------------
@@ -53,45 +52,74 @@ UCODEFILE		:= $(UCODEDIR)/light8080.m80
 
 #---- Rules. -------------------------------------------------------------------
 
+
+.DEFAULT: help
+.PHONY: help
+help:
+	@echo "Build and run light8080 TBs (VHDL version only) using GHDL"
+	@echo
+	@echo "GOALS:"
+	@echo
+	@echo "   sim  ................ Build SW test \$$TEST and run it on TB"
+	@echo "     sw  ............... Build SW test \$$TEST"
+	@echo "     ghdl-elab  ........ Elaborate RTL + TB sources"
+	@echo "     ghdl-run  ......... Run elaborated simulation"
+	@echo
+	@echo "   help  ............... Show this text"
+	@echo "   clean  .............. Remove GHDL output files"
+	@echo "   clean-sw  ........... Clean SW test \$$TEST"
+	@echo "   clean-all  .......... Remove GHDL output files & clean all SW tests"
+	@echo 
+
+
 # Make sure the test SW directory at least exists.
+.PHONY: check_test
 check_test:
 ifeq ($(wildcard $(SWDIR)/$(TEST)/.),)
 	$(error ERROR: Could not find test directory '$(SWDIR)/$(TEST)'.)
 endif
 
 # Build SW, generate ROM files (obj code vhdl package) for RTL simulation.
+.PHONY: sw
 sw: check_test
 	make -C $(SWDIR)/$(TEST) vhdl
 
 # Just invoke the simulator.
-sim: ghdl 
+.PHONY: sim
+sim: ghdl-elab ghdl-run 
 
-# Generate the microcode package from the microcode assembly file.
-ucode: $(UCODEFILE)
+# Generate the microcode RTL source from the microcode assembly file.
+$(UCODEFILE):
 	$(UASMDIR)/ucode_asm.py -l $(CURDIR)/light8080.m80.lst $(UCODEFILE) $(RTLDIR)/light8080_ucode_pkg.vhdl
 
 
-# Run SW on VHDL TB on GHDL. 
-ghdl: sw ucode ghdl_rtl 
-	$(GHDLC) -a $(GHDLFLAGS) $(PKGTB) $(SRCTB)
-	$(GHDLC) -m $(GHDLFLAGS) $(TBUNIT)
-	./$(TBUNIT) $(GHDLSIMFLAGS) --wave=$(TBUNIT).ghw
+# Run SW on VHDL TB on GHDL.
+.PHONY: ghdl-run
+ghdl-run: sw ghdl-elab  
+	$(GHDLC) -r $(TBUNIT) $(GHDLSIMFLAGS) --wave=$(TBUNIT).ghw
 
 # Compile the whole set of sources, packages first.
 # Note we insert the SW object code package after the main package sources.
-ghdl_rtl: $(PKGRTL) $(SRCRTL)
+.PHONY: ghdl-elab
+ghdl-elab: $(PKGRTL) $(SRCRTL)
 	$(GHDLC) -a $(GHDLFLAGS) ${PKGRTL} ${PKGCODE} ${SRCRTL}
+	$(GHDLC) -a $(GHDLFLAGS) $(PKGTB) $(SRCTB)
+	$(GHDLC) -e $(GHDLFLAGS) $(TBUNIT)
 
-# Invoke ghdl to check source syntax.
-ghdl_syntax:
-	$(GHDLC) -s $(PKGTB) $(SRCTB)
 
-# Invoke the wave viewer, assume there are waves to view at all.
-ghdl_view : ghdl
-	$(WAVE) $(TBUNIT).ghw
-
+.PHONY: clean
 clean: check_test
-	rm -rf *.lst *.map *.rel *.sym *.p *.ihx *.vhdl *.v *.lst
+	rm -f $(TBUNIT)
+	rm -rf *.lst *.map *.rel *.sym *.p *.ihx *.vhdl *.v *.lst *.o
+	rm -rf *.cf
 	$(GHDLC) --clean
-	rm -rf *.vcd *.ghw *.cf
+	rm -rf *.vcd *.ghw
+
+
+.PHONY: clean-all
+clean-all: clean
+	rm -f $(SWDIR)/*/obj_code_pkg.vhdl
+
+.PHONY: clean-sw
+clean-sw:
 	make -C $(SWDIR)/$(TEST) clean
