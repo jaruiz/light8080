@@ -6,17 +6,15 @@
 # in question. $(CURDIR) is meant to be the SW dir.
 # BUT you really should invoke the simulation from $(PROJECTDIR)/sim.
 # 
-# TARGETS
-# ========
-# vhdl          - Build SW, put it on ROMable VHDL package constant.
-# ghdl 		- Build all then run test SW on mcu80 TB on GHDL.
-# clean 	- Clean.
+# See help text below.
 #
 # Equivalent targets for the Verilog version of the project, using Icarus, will
 # be added eventually.
 #-------------------------------------------------------------------------------
 
-.PHONY: clean vhdl verilog ghdl ghdl_rtl ghdl_syntax
+# Use bash for shell commands like echo.
+SHELL := /bin/bash
+
 
 #---- Assembler configuration. Adapt to your own setup. ------------------------
 
@@ -62,6 +60,25 @@ VHDL_PKG_NAME 	?= obj_code_pkg.vhdl
 VLOG_INC_NAME 	?= obj_code.inc.v
 
 
+
+#---- Some help text -----------------------------------------------------------
+
+.DEFAULT: help
+.PHONY: help
+help:
+	@echo "Use this makefile to build SW samples included within the project."
+	@echo
+	@echo "GOALS:"
+	@echo "   sw  ..................... Build program \$$PROJ_NAME (defaults to 'diagnostic')"
+	@echo "                             Object code is generated as a ROM-able constant "
+	@echo "                             within a VHDL package and a Verilog include file"
+	@echo "   help  ................... Show this help text"
+	@echo "   clean  .................. Regular clean goal"
+	@echo
+	@echo "You'll need 8080 assembler ASL installed."
+	@echo "The makefile within \$$PROJECT/tools will install it locally for you."
+	@echo
+
 #---- Vars & rules common to all code samples. ---------------------------------
 
 # SW sources. 
@@ -77,6 +94,7 @@ HEX 			:= $(addsuffix .ihx, $(basename $(word 1, ${ASM_SRC})))
 ASL_INSTALLED 		:= $(shell command -v ${ASM} 2> /dev/null)
 
 # If ASL is not installed, echo some useful advice.
+.PHONY: check_assembler_install
 check_assembler_install:
 ifndef ASL_INSTALLED
 	@echo -e "\e[1;31mCould not find ASL assembler at the expected path.\e[0m"
@@ -95,10 +113,12 @@ endif
 
 # Linker. 
 # ASL does not have a linker as such; this step is a p-to-hex reformatter.
+.PHONY: bin
 bin: ${OBJ}
 	${OBJ2HEX} ${OBJ} ${HEX} ${LFLAGS}
 
 # VHDL package generator.
+.PHONY: vhdl
 vhdl: bin
 	@echo Building VHDL package \'$(VHDL_PKG_NAME)\'
 	@$(ROM_RTL) --project=$(PROJ_NAME) --output=$(VHDL_PKG_NAME) \
@@ -108,13 +128,15 @@ vhdl: bin
 
 # Verilog include file generator.
 # TODO add support for Verilog! 
+.PHONY: verilog
 verilog: bin
 	@echo Building Verilog include file \'$(VLOG_INC_NAME)\'
 
 # Build SW, generate ROM files for RTL simulation.
+.PHONY: sw
 sw: vhdl verilog
 
-
+.PHONY: clean
 clean:
 	rm -rf *.lst *.map *.rel *.sym *.p *.ihx *.vhdl *.v
 	$(GHDLC) --clean
