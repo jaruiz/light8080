@@ -20,6 +20,9 @@ package mcu80_pkg is
 -- Global signals for the TB to use in lieu of hierarchical names.
 signal mon_addr :       std_logic_vector(15 downto 0);
 signal mon_fetch :      std_logic;
+signal mon_we :         std_logic;
+signal mon_wdata :      std_logic_vector(7 downto 0);
+signal mon_uart_ce :    std_logic;
 
 -- Basic array type for the declaration of initialization constants.
 -- This type is meant to be used to declare a constant with the object code

@@ -37,16 +37,16 @@ constant MAX_SIM_LENGTH : time := T*70000; -- enough for most purposes
 signal clk :                std_logic := '0';
 signal reset :              std_logic := '1';
 signal done :               std_logic := '0';
-signal pass :               std_logic := '0';
 signal interrupts :         std_logic_vector(3 downto 0);
 signal iop1 :               std_logic_vector(7 downto 0);
 signal iop2 :               std_logic_vector(7 downto 0);
 signal txd :                std_logic;
 signal rxd :                std_logic;
 
--- Log file
+-- Log file...
 file log_file: TEXT open write_mode is "hw_sim_log.txt";
-
+-- ...and console echo file.
+file con_file: TEXT open write_mode is "hw_sim_con.txt";
 
 begin
 
@@ -101,32 +101,17 @@ begin
         report "Test timed out."
         severity failure;
 
-        -- Report failure if we didn't catch the pass condition...
-        assert (pass = '1')
-        report "Test FAILED."
-        severity failure;
-        -- ...and report a pass note otherwise.
-        report "Test PASSED."
-        severity note;
-    
+        if iop2 = X"55" then 
+            report "Test PASSED."
+            severity note;
+        else
+            report "Test FAILED."
+            severity failure;
+        end if;
+
         wait;
     end process main_test;
-  
-    -- pass_fail_condition_check: Watch MCP port P2 for a pass/fail signature.
-    pass_fail_condition_check:
-    process
-    begin
-        loop
-            wait on iop2;
-            if iop2 = X"55" then 
-                done <= '1';
-                pass <= '1';
-            elsif iop2 = X"AA" then
-                done <= '1';
-                pass <= '0';
-            end if;
-        end loop;
-    end process pass_fail_condition_check;
+
 
     -- Logging process: launch logger functions --------------------------------
 
@@ -134,8 +119,13 @@ begin
     log_execution:
     process
     begin
+        con_line_ix <= 1;
+        con_line_buf <= (others => ' ');
         -- Log cpu activity until done='1'.
-        mon_cpu_trace(clk, reset, done, log_file);
+        mon_cpu_trace(
+            clk, reset, done, 
+            con_line_buf,  con_line_ix,
+            con_file, log_file);
 
         wait;
     end process log_execution;

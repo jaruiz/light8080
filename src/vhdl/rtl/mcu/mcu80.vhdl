@@ -370,6 +370,9 @@ begin
         -- This does not require VHDL 2008 support or proprietary tricks.
         mon_addr <=             cpu_addr;
         mon_fetch <=            cpu_fetch;
+        mon_wdata <=            cpu_data_o;
+        mon_we <=               cpu_wr;
+        mon_uart_ce <=          uart_ce;
     end generate Internal_signal_extraction;
 
 end hardwired;
