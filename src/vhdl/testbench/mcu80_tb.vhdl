@@ -6,12 +6,15 @@
 library ieee;
 use ieee.std_logic_1164.ALL;
 use ieee.numeric_std.ALL;
+use std.textio.all;
 
 
 -- Package with utility functions for handling SoC object code.
 use work.mcu80_pkg.all;
 -- Package that contains the program object code in VHDL constant format.
 use work.obj_code_pkg.all;
+-- Package with TB support stuff.
+use work.light8080_tb_pkg.all;
 
 
 entity mcu80_tb is
@@ -41,6 +44,8 @@ signal iop2 :               std_logic_vector(7 downto 0);
 signal txd :                std_logic;
 signal rxd :                std_logic;
 
+-- Log file
+file log_file: TEXT open write_mode is "hw_sim_log.txt";
 
 
 begin
@@ -50,7 +55,8 @@ begin
     generic map (
         OBJ_CODE => work.obj_code_pkg.object_code,
         UART_HARDWIRED => false,    -- UART baud rate NOT run-time programmable.
-        UART_IRQ_LINE => 3          -- UART uses IRQ3 line of irq controller.
+        UART_IRQ_LINE => 3,         -- UART uses IRQ3 line of irq controller.
+        SIMULATION => True
     )  
     port map (
         clk =>              clk,
@@ -121,5 +127,17 @@ begin
             end if;
         end loop;
     end process pass_fail_condition_check;
+
+    -- Logging process: launch logger functions --------------------------------
+
+
+    log_execution:
+    process
+    begin
+        -- Log cpu activity until done='1'.
+        mon_cpu_trace(clk, reset, done, log_file);
+
+        wait;
+    end process log_execution;
 
 end;

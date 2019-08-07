@@ -54,6 +54,12 @@ use work.mcu80_pkg.all;
 -- Note that you have to set generic z. This value is needed to compute the 
 -- UART baud rate constants.
 --
+-- SIMULATION (Defaults to False):
+-- When True, a number of internal signals are connected to global package
+-- signals.
+-- This gives the TB access to those signals without using VHDL2008 features
+-- (not yet supported in GHDL) or equivalent proprietary schemes.
+-- Set it to True in the TB, ignore it otherwise.
 --------------------------------------------------------------------------------
 -- I/O port map:
 ----------------
@@ -86,7 +92,8 @@ entity mcu80 is
       UART_IRQ_LINE : integer := 4;     -- [0..3] or >3 for none
       UART_HARDWIRED: boolean := true;  -- UART baud rate is hardwired
       BAUD_RATE     : integer := 19200; -- UART (default) baud rate
-      CLOCK_FREQ    : integer := 50E6   -- Clock frequency in Hz
+      CLOCK_FREQ    : integer := 50E6;  -- Clock frequency in Hz
+      SIMULATION    : boolean := False  -- True when instantiated in TB
     );
     port (  
       p1_i :          in std_logic_vector(7 downto 0);
@@ -352,7 +359,18 @@ begin
     uart_data_rd    when ADDR_UART_3,
     irqcon_data_rd  when INTR_EN_REG,
     X"00"           when others;
-  
+
+
+    -- Simulation support ------------------------------------------------------
+
+    Internal_signal_extraction:
+    if SIMULATION generate
+        -- 'Connect' all the internal signals we want to watch to members of
+        -- the info record.
+        -- This does not require VHDL 2008 support or proprietary tricks.
+        mon_addr <=             cpu_addr;
+        mon_fetch <=            cpu_fetch;
+    end generate Internal_signal_extraction;
 
 end hardwired;
 
