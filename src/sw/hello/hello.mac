@@ -89,10 +89,14 @@ start:    lxi   sp,stack
           lxi   h,msg_hello
           call  print_string
 
-          ; Write 55h to port P2. This will be caught as 'test pass' termination
-          ; condition by the simulation TB.
+          ; Write 55h to port P2. This will be caught as 'test pass' outcome
+          ; by the simulation TB.
           mvi   a,55h
           out   P2OUT
+          ; Now write EOF to UART_DATA. This terminates the TB.
+          mvi   a,04h
+          out   UART_DATA
+
 
 forever:          
           in    P1IN
@@ -107,7 +111,7 @@ forever:
           hlt
 done:     jmp   done 
 
-msg_hello: db "\n\r\nHello World!$\000"          
+msg_hello: db "\n\r\nHello World!\n$\000"
           
 ;irq_uart: UART interrupt processing 
 irq_uart:
@@ -166,12 +170,14 @@ irq_uart_end:
 print_string:
           ; We don't check if there's a transmission going on, we just start
           ; transmitting. Not suitable for real use!
+print_string_loop:
           mov   a,m             ; Get first character from string...
           inx   h               ; ...and move updated string pointer to TX  
           shld  ptr_tx          ; buffer pointer.
           cpi   '$'             ; Kickstart transmission by sending 1st byte...
           jz    print_string_end; ...unless its the end of string marker.
-          out   UART_DATA       ; 
+          out   UART_DATA       ;
+          jmp   print_string_loop
 print_string_end:
           ret
 
